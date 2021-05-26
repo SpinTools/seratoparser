@@ -7,10 +7,6 @@ Currently supported:
 - [x] Crates
 - [ ] History File
 - [x] History Sessions
-- [x] Track Cues
-- [x] Track Loops
-- [x] Track Color
-- [x] Track Flips
 
 ## Installation
 
