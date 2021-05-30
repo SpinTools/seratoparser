@@ -7,6 +7,8 @@ import (
 	"sort"
 )
 
+
+// GetCrates returns files of all crates found in Serato Path
 // TODO: Should we parse meta data of theses files, or only provide OS level elements. Weird to be a parser library and no parsing.
 // TODO: Is there Serato Crate meta data?
 func (p Parser) GetCrates() []os.FileInfo {
@@ -24,7 +26,6 @@ func (p Parser) GetCrates() []os.FileInfo {
 
 		filePath := filepath.FromSlash(seratoFolder + "/" + seratoFile.Name())
 		filePath,_ = filepath.Abs(filePath)
-		//filePath = FixDirSeperator(filePath)
 		crateFiles = append(crateFiles, seratoFile)
 	}
 
@@ -36,6 +37,7 @@ func (p Parser) GetCrates() []os.FileInfo {
 }
 
 
+// GetCrateTracks takes a filename and returns all the tracks/entities inside the crate
 func (p Parser) GetCrateTracks (fileName string) []MediaEntity {
 	return readMediaEntities(filepath.FromSlash(p.FilePath + "/Subcrates/" + fileName))
 }

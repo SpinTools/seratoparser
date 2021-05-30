@@ -4,14 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/binary"
-	"io"
 	"math"
 	"reflect"
 	"strconv"
 	"strings"
 	"unicode/utf16"
 	"unicode/utf8"
-
 )
 
 func parseFilePeek (b *bufio.Reader, n int) ([]byte, bool) {
@@ -91,8 +89,7 @@ func matchUtf16 (b *bufio.Reader, s string) (bool) {
 	return false
 }
 
-// UTF16BytesToString converts UTF-16 encoded bytes, in big or little endian byte order,
-// to a UTF-8 encoded string.
+// utf16BytesToString converts UTF-16 encoded bytes, in big or little endian byte order, to a UTF-8 encoded string.
 func utf16BytesToString(b []byte) string {
 	utf := make([]uint16, (len(b)+(2-1))/2)
 	for i := 0; i+(2-1) < len(b); i += 2 {
@@ -204,25 +201,4 @@ func reflectValue (v *reflect.Value, dataValue string) {
 			v.SetBytes(newBytes[:])
 		}
 	}
-}
-
-func unreadBytes(byteReader *bytes.Reader, n int) {
-	for n > 0 {
-		_ = byteReader.UnreadByte()
-		n--
-	}
-}
-
-func decodeLenInBytes (byteReader * bytes.Reader, n int) int {
-	// Read length in bytes
-	lenInBytes := make([]byte, n)
-	if _, err := io.ReadAtLeast(byteReader, lenInBytes, n); err != nil {
-		return 0
-	}
-	dataLen := int(binary.BigEndian.Uint32(lenInBytes))
-	if dataLen == 0 {
-		return 0
-	}
-
-	return dataLen
 }

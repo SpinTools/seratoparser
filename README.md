@@ -1,5 +1,8 @@
 # Serato Parser
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/SpinTools/serato-parser)](https://goreportcard.com/report/github.com/SpinTools/serato-parser)
+
+
 A GoLang library for reading Serato database files.
 
 Data Types Supported:

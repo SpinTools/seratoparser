@@ -15,6 +15,7 @@ type Parser struct {
 
 var SeratoParser Parser
 
+// New creates a new object with the provided Serato Database Path
 func New(seratoPath string) Parser {
 	SeratoParser = Parser{}
 	SeratoParser.FilePath = strings.TrimSuffix(seratoPath, "/")

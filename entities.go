@@ -2,25 +2,7 @@ package serato_parser
 
 var seratoVolume string
 
-type Crate struct {
-	Id          	int64
-	ParentId    	int64
-	Name        	string
-	Path        	string
-	Filepath    	string
-	Folders     	[]string
-	Genre       	string
-	Expanded		int
-	Position		int
-	Casing			int
-	MakeSubCrates	bool
-}
-
-type CrateMediaEntities struct {
-	Id		int64
-	Tracks	[]MediaEntity
-}
-
+// MediaEntity defines Tracks/Songs entities in a Database or Crate
 type MediaEntity struct {
 	// META
 	DVOL    string  // volume
@@ -40,20 +22,7 @@ type MediaEntity struct {
 	ULBL    []byte // color - track colour
 }
 
-type MediaDbEntity struct {
-	Vol         string
-	Filepath    string
-	Missing     bool
-	Corrupt     bool
-	Added       int
-	Color       string
-}
-
-type SessionHistoryEntities struct {
-	Id		int64
-	Tracks	[][]HistoryEntity
-}
-
+// HistoryEntity defines Tracks/Songs entities in a History Session
 type HistoryEntity struct {
 	RROW    int     // rrow
 	RDIR    string  // rfullpath
@@ -73,6 +42,7 @@ type HistoryEntity struct {
 	RDEV    string  // rdevice
 }
 
+// Defines all the known keys with their integer key found in Serato Databases
 // TODO: Identify all fields of an ADAT object
 var SeratoAdatMap = map[int]string{
 	1   :   "RROW",  // rrow
