@@ -1,218 +1,218 @@
 package seratoparser
 
 import (
-	"bufio"
-	"bytes"
-	"encoding/binary"
-	"math"
-	"reflect"
-	"strconv"
-	"strings"
-	"unicode/utf16"
-	"unicode/utf8"
+        "bufio"
+        "bytes"
+        "encoding/binary"
+        "math"
+        "reflect"
+        "strconv"
+        "strings"
+        "unicode/utf16"
+        "unicode/utf8"
 )
 
 func parseFilePeek(b *bufio.Reader, n int) ([]byte, bool) {
-	bPeek, err := b.Peek(n)
-	if err != nil {
-		return nil, true
-	}
+        bPeek, err := b.Peek(n)
+        if err != nil {
+                return nil, true
+        }
 
-	return bPeek, false
+        return bPeek, false
 }
 func parseFileByte(b *bufio.Reader) (byte, bool) {
-	bByte, err := b.ReadByte()
-	if err != nil {
-		return '\000', true
-	}
+        bByte, err := b.ReadByte()
+        if err != nil {
+                return '\000', true
+        }
 
-	return bByte, false
+        return bByte, false
 }
 func parseFileLen(b *bufio.Reader, n int) (string, bool) {
-	var buffer bytes.Buffer
-	counter := 0
-	for {
-		char, eof := parseFileByte(b)
-		if eof {
-			return "", true
-		}
-		buffer.WriteByte(char)
-		counter++
-		if counter == n {
-			break
-		}
-	}
+        var buffer bytes.Buffer
+        counter := 0
+        for {
+                char, eof := parseFileByte(b)
+                if eof {
+                        return "", true
+                }
+                buffer.WriteByte(char)
+                counter++
+                if counter == n {
+                        break
+                }
+        }
 
-	return buffer.String(), false
+        return buffer.String(), false
 }
 
 func parseCString(b *bufio.Reader) (string, bool) {
-	/*
-	 * From the passed string, find the nearest \0 byte and return everything before it
-	 */
-	var buffer bytes.Buffer
-	for {
-		char, eof := parseFileByte(b)
-		if eof {
-			return "", true
-		}
-		if char == '\000' {
-			break
-		}
-		buffer.WriteByte(char)
-	}
+        /*
+         * From the passed string, find the nearest \0 byte and return everything before it
+         */
+        var buffer bytes.Buffer
+        for {
+                char, eof := parseFileByte(b)
+                if eof {
+                        return "", true
+                }
+                if char == '\000' {
+                        break
+                }
+                buffer.WriteByte(char)
+        }
 
-	return buffer.String(), false
+        return buffer.String(), false
 }
 
 func parseField(b *bufio.Reader) (string, string, bool) {
-	/*
-	 *
-	 */
-	name, eof := parseFileLen(b, 4)
-	if eof {
-		return "", "", true
-	}
-	rawlen, eof := parseFileLen(b, 4)
-	if eof {
-		return "", "", true
-	}
-	length := int(hexBin2Float(rawlen))
+        /*
+         *
+         */
+        name, eof := parseFileLen(b, 4)
+        if eof {
+                return "", "", true
+        }
+        rawlen, eof := parseFileLen(b, 4)
+        if eof {
+                return "", "", true
+        }
+        length := int(hexBin2Float(rawlen))
 
-	data, eof := parseFileLen(b, length)
-	if eof {
-		return "", "", true
-	}
+        data, eof := parseFileLen(b, length)
+        if eof {
+                return "", "", true
+        }
 
-	return name, data, false
+        return name, data, false
 }
 
 func matchUtf16(b *bufio.Reader, s string) bool {
-	/*
-	 * Match utf16 string with next len() bytes
-	 */
-	chars, _ := parseFileLen(b, len(s))
-	if chars == s {
-		return true
-	}
+        /*
+         * Match utf16 string with next len() bytes
+         */
+        chars, _ := parseFileLen(b, len(s))
+        if chars == s {
+                return true
+        }
 
-	return false
+        return false
 }
 
 // utf16BytesToString converts UTF-16 encoded bytes, in big or little endian byte order, to a UTF-8 encoded string.
 func utf16BytesToString(b []byte) string {
-	utf := make([]uint16, (len(b)+(2-1))/2)
-	for i := 0; i+(2-1) < len(b); i += 2 {
-		utf[i/2] = binary.BigEndian.Uint16(b[i:])
-	}
-	if len(b)/2 < len(utf) {
-		utf[len(utf)-1] = utf8.RuneError
-	}
-	return string(utf16.Decode(utf))
+        utf := make([]uint16, (len(b)+(2-1))/2)
+        for i := 0; i+(2-1) < len(b); i += 2 {
+                utf[i/2] = binary.BigEndian.Uint16(b[i:])
+        }
+        if len(b)/2 < len(utf) {
+                utf[len(utf)-1] = utf8.RuneError
+        }
+        return string(utf16.Decode(utf))
 }
 
 func makeUtf8(s string) string {
-	/*
-	 * Convert the passed string s to UTF8 format
-	 */
-	var buffer bytes.Buffer
-	for i := 0; i < len(s); i++ {
-		if s[i] == '\000' {
-			continue
-		}
-		buffer.WriteByte(s[i])
-	}
+        /*
+         * Convert the passed string s to UTF8 format
+         */
+        var buffer bytes.Buffer
+        for i := 0; i < len(s); i++ {
+                if s[i] == '\000' {
+                        continue
+                }
+                buffer.WriteByte(s[i])
+        }
 
-	return buffer.String()
+        return buffer.String()
 }
 
 func makeUtf16(s string) string {
-	/*
-	 * Convert the passed string s to serato UTF16 format
-	 */
-	var buffer bytes.Buffer
-	for i := 0; i < len(s); i++ {
-		buffer.WriteByte(0)
-		buffer.WriteByte(s[i])
-	}
+        /*
+         * Convert the passed string s to serato UTF16 format
+         */
+        var buffer bytes.Buffer
+        for i := 0; i < len(s); i++ {
+                buffer.WriteByte(0)
+                buffer.WriteByte(s[i])
+        }
 
-	return buffer.String()
+        return buffer.String()
 }
 
 func hexBin2Int(raw string) int {
-	return int(hexBin2Float(raw))
+        return int(hexBin2Float(raw))
 }
 
 func hexBin2Float(raw string) (val float64) {
-	for i := 0; i < len(raw); i++ {
-		fl1 := math.Pow(2, 8)
-		fl2 := float64((len(raw) - 1) - i)
-		val += float64(raw[i]) * math.Pow(fl1, fl2)
-	}
+        for i := 0; i < len(raw); i++ {
+                fl1 := math.Pow(2, 8)
+                fl2 := float64((len(raw) - 1) - i)
+                val += float64(raw[i]) * math.Pow(fl1, fl2)
+        }
 
-	return val
+        return val
 }
 
 func parseOtrk(dataBuffer *bufio.Reader, newEntity *MediaEntity) {
-	elem := reflect.ValueOf(newEntity).Elem()
-	for {
-		dataName, dataValue, eof := parseField(dataBuffer)
-		if eof {
-			break
-		}
+        elem := reflect.ValueOf(newEntity).Elem()
+        for {
+                dataName, dataValue, eof := parseField(dataBuffer)
+                if eof {
+                        break
+                }
 
-		newEntity.DVOL = seratoVolume
+                newEntity.DVOL = seratoVolume
 
-		v := elem.FieldByName(strings.ToUpper(dataName))
-		reflectValue(&v, dataValue)
-	}
+                v := elem.FieldByName(strings.ToUpper(dataName))
+                reflectValue(&v, dataValue)
+        }
 }
 
 func parseAdat(dataValue string, newEntity interface{}) {
-	adatBuffer := bufio.NewReader(strings.NewReader(dataValue))
-	elem := reflect.ValueOf(newEntity).Elem()
-	for {
-		adatFieldHex, adatValue, eof := parseField(adatBuffer)
-		if eof {
-			break
-		}
+        adatBuffer := bufio.NewReader(strings.NewReader(dataValue))
+        elem := reflect.ValueOf(newEntity).Elem()
+        for {
+                adatFieldHex, adatValue, eof := parseField(adatBuffer)
+                if eof {
+                        break
+                }
 
-		adatFieldID := hexBin2Int(adatFieldHex)
-		adatName := SeratoAdatMap[adatFieldID]
+                adatFieldID := hexBin2Int(adatFieldHex)
+                adatName := SeratoAdatMap[adatFieldID]
 
-		v := elem.FieldByName(strings.ToUpper(adatName))
-		reflectValue(&v, adatValue)
-		if v.IsValid() && v.Type().String() == "string" {
-			tmpStringVal := v.String()
-			v.SetString(tmpStringVal[:len(tmpStringVal)-1])
-		}
-	}
+                v := elem.FieldByName(strings.ToUpper(adatName))
+                reflectValue(&v, adatValue)
+                if v.IsValid() && v.Type().String() == "string" {
+                        tmpStringVal := v.String()
+                        v.SetString(tmpStringVal[:len(tmpStringVal)-1])
+                }
+        }
 }
 
 func reflectValue(v *reflect.Value, dataValue string) {
-	if v.IsValid() {
-		t := v.Type().String()
-		switch t {
-		case "string":
-			//rlog.Debug("%s \n", utf16BytesToString([]byte(dataValue)))
-			v.SetString(utf16BytesToString([]byte(dataValue)))
-		case "float":
-			newFloat := hexBin2Float(dataValue) // convert hexbin to int
-			//rlog.Debug("%d(%d) \n", newFloat, int64(newFloat))
-			v.SetFloat(newFloat)
-		case "int":
-			newFloat := hexBin2Int(dataValue) // convert hexbin to int
-			//rlog.Debug("%d(%d) \n", newFloat, int64(newFloat))
-			v.SetInt(int64(newFloat))
-		case "bool":
-			newBool, _ := strconv.ParseBool(dataValue)
-			//rlog.Debug("%t \n", newBool)
-			v.SetBool(newBool)
-		case "[]uint8":
-			newBytes := make([]byte, 4)
-			binary.LittleEndian.PutUint32(newBytes[:], uint32(hexBin2Int(dataValue)))
-			//rlog.Debug("%t \n", newBytes)
-			v.SetBytes(newBytes[:])
-		}
-	}
+        if v.IsValid() {
+                t := v.Type().String()
+                switch t {
+                case "string":
+                        //rlog.Debug("%s \n", utf16BytesToString([]byte(dataValue)))
+                        v.SetString(utf16BytesToString([]byte(dataValue)))
+                case "float":
+                        newFloat := hexBin2Float(dataValue) // convert hexbin to int
+                        //rlog.Debug("%d(%d) \n", newFloat, int64(newFloat))
+                        v.SetFloat(newFloat)
+                case "int":
+                        newFloat := hexBin2Int(dataValue) // convert hexbin to int
+                        //rlog.Debug("%d(%d) \n", newFloat, int64(newFloat))
+                        v.SetInt(int64(newFloat))
+                case "bool":
+                        newBool, _ := strconv.ParseBool(dataValue)
+                        //rlog.Debug("%t \n", newBool)
+                        v.SetBool(newBool)
+                case "[]uint8":
+                        newBytes := make([]byte, 4)
+                        binary.LittleEndian.PutUint32(newBytes[:], uint32(hexBin2Int(dataValue)))
+                        //rlog.Debug("%t \n", newBytes)
+                        v.SetBytes(newBytes[:])
+                }
+        }
 }
