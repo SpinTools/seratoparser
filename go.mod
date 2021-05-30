@@ -1,4 +1,4 @@
-module serato-parser
+module seratoparser
 
 go 1.16
 
