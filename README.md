@@ -2,10 +2,10 @@
 
 A GoLang library for reading Serato database files.
 
-Currently supported:
+Data Types Supported:
 - [x] Database V2
 - [x] Crates
-- [ ] History File
+- [ ] History Database
 - [x] History Sessions
 
 ## Installation
@@ -19,13 +19,34 @@ go get -u github.com/SpinTools/serato-parser
 ## Usage
 
 ```go
-TBD
+func main() {
+    // Provide Serato Folder
+    p := SeratoParser.New("/Users/Stoyvo/Music/_Serato_")
+    
+    // Get All Tracks in Serato Database
+    Tracks := p.GetAllTracks()
+    log.Println("Database V2:", Tracks)
+    
+    // Get all Crates
+    crates := p.GetCrates()
+    log.Println("Crates:", crates)
+    
+    // Read crate and get all Tracks
+    mediaEntities := p.GetCrateTracks(crates[0].Name())
+    log.Println("Crate Tracks:", mediaEntities)
+
+    // Get all session files
+    sessions := p.GetHistorySessions()
+    log.Println("History Sessions:", sessions)
+    
+    // Read History Session
+    historyEntities := p.ReadHistorySession(sessions[0].Name())
+    log.Println("History Tracks:", historyEntities)
+}
 ```
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
+Pull requests are welcome, update tests as appropriate.
 
 ## License
 [MIT](https://github.com/SpinTools/serato-parser/LICENSE)
