@@ -2,10 +2,10 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/SpinTools/seratoparser)](https://goreportcard.com/report/github.com/SpinTools/seratoparser)
 
-
 A GoLang library for reading Serato database files.
 
 Data Types Supported:
+
 - [x] Database V2
 - [x] Crates
 - [ ] History Database
@@ -49,7 +49,9 @@ func main() {
 ```
 
 ## Contributing
+
 Pull requests are welcome, update tests as appropriate.
 
 ## License
+
 [MIT](https://github.com/SpinTools/seratoparser/LICENSE)

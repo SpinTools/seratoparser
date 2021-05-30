@@ -15,7 +15,7 @@ import (
 var HistoryPath = "/History"
 
 // SessionPath is the path inside the _Serato_/History folder that contains all the played Sessions.
-var SessionPath = HistoryPath +"/Sessions"
+var SessionPath = HistoryPath + "/Sessions"
 
 // GetHistorySessions returns a list of all Serato History session files in the users Serato directory.
 func (p Parser) GetHistorySessions() []fs.FileInfo {
@@ -28,7 +28,7 @@ func (p Parser) GetHistorySessions() []fs.FileInfo {
 
 	// Remove .DS_STORE files.
 	for i := 0; i < len(sessionFiles); i++ {
-		if !strings.HasSuffix(sessionFiles[i].Name(),".session") {
+		if !strings.HasSuffix(sessionFiles[i].Name(), ".session") {
 			sessionFiles = append(sessionFiles[:i], sessionFiles[i+1:]...)
 			i--
 		}
@@ -39,7 +39,7 @@ func (p Parser) GetHistorySessions() []fs.FileInfo {
 		return sessionFiles
 	}
 
-	sort.Slice(sessionFiles, func(i,j int) bool{
+	sort.Slice(sessionFiles, func(i, j int) bool {
 		return sessionFiles[i].ModTime().Unix() > sessionFiles[j].ModTime().Unix()
 	})
 
@@ -93,7 +93,7 @@ func (p Parser) ReadHistorySession(fileName string) []HistoryEntity {
 
 	for {
 		nextTag1, eof := parseFilePeek(fileBuffer, 1)
-		nextTag4,_ := parseFilePeek(fileBuffer, 4)
+		nextTag4, _ := parseFilePeek(fileBuffer, 4)
 		if eof || string(nextTag1) == "" {
 			break
 		} else if string(nextTag4) == "osrt" {
@@ -104,7 +104,7 @@ func (p Parser) ReadHistorySession(fileName string) []HistoryEntity {
 
 				// break if we don't need to be here
 				//  TODO: What is oses?
-				if eof || (name != "otrk" && name != "oent") {//&& name != "oses") {
+				if eof || (name != "otrk" && name != "oent") { //&& name != "oses") {
 					break
 				}
 
@@ -112,7 +112,9 @@ func (p Parser) ReadHistorySession(fileName string) []HistoryEntity {
 				if name == "oent" {
 					for {
 						dataName, dataValue, eof := parseField(&dataBuffer)
-						if eof || dataName != "adat" { break }
+						if eof || dataName != "adat" {
+							break
+						}
 
 						historyEntity := HistoryEntity{}
 						parseAdat(dataValue, &historyEntity)
@@ -121,7 +123,9 @@ func (p Parser) ReadHistorySession(fileName string) []HistoryEntity {
 				} else if name == "oses" {
 					for {
 						dataName, dataValue, eof := parseField(&dataBuffer)
-						if eof || dataName != "adat" { break }
+						if eof || dataName != "adat" {
+							break
+						}
 
 						rlog.Println(dataName)
 						rlog.Println(dataValue)

@@ -24,10 +24,9 @@ func New(seratoPath string) Parser {
 	return SeratoParser
 }
 
-
-func fileHeader (fileBuffer *bufio.Reader, key string, value string) bool {
+func fileHeader(fileBuffer *bufio.Reader, key string, value string) bool {
 	// get first key
-	firstKey,_ := parseCString(fileBuffer)
+	firstKey, _ := parseCString(fileBuffer)
 	if firstKey == "vrsn" {
 		// Skip over next \0
 		parseCString(fileBuffer)
@@ -50,7 +49,7 @@ func fileHeader (fileBuffer *bufio.Reader, key string, value string) bool {
 	return true
 }
 
-func fileCrateColumns (fileBuffer *bufio.Reader) {
+func fileCrateColumns(fileBuffer *bufio.Reader) {
 	/*
 	   Field #    TAG     Description
 	   ==============================
@@ -81,13 +80,15 @@ func fileCrateColumns (fileBuffer *bufio.Reader) {
 	*/
 
 	for {
-		nextTag,_ := parseFilePeek(fileBuffer, 4)
+		nextTag, _ := parseFilePeek(fileBuffer, 4)
 		if string(nextTag) == "otrk" || string(nextTag) == "oent" {
 			break
 		}
 		// do stuff here for crate columns
 		_, eof := parseFileLen(fileBuffer, 1)
-		if eof { break }
+		if eof {
+			break
+		}
 	}
 }
 
@@ -138,7 +139,7 @@ func readMediaEntities(fileName string) []MediaEntity {
 	fileExt := filepath.Ext(seratoFile)
 	fileType := filepath.Base(seratoFile)
 	if fileExt == ".crate" {
-		if !fileHeader(fileBuffer,  "81.0", "/Serato ScratchLive Crate") {
+		if !fileHeader(fileBuffer, "81.0", "/Serato ScratchLive Crate") {
 			rlog.Critical("ReadFile: Unable to parse crate |", seratoFile)
 		}
 	} else if fileType == "database V2" {
@@ -159,7 +160,7 @@ func readMediaEntities(fileName string) []MediaEntity {
 
 	for {
 		nextTag1, eof := parseFilePeek(fileBuffer, 1)
-		nextTag4,_ := parseFilePeek(fileBuffer, 4)
+		nextTag4, _ := parseFilePeek(fileBuffer, 4)
 		if eof || string(nextTag1) == "" {
 			break
 		} else if string(nextTag4) == "osrt" {
@@ -170,7 +171,7 @@ func readMediaEntities(fileName string) []MediaEntity {
 
 				// break if we don't need to be here
 				//  TODO: What is oses?
-				if eof || (name != "otrk" && name != "oent") {//&& name != "oses") {
+				if eof || (name != "otrk" && name != "oent") { //&& name != "oses") {
 					break
 				}
 

@@ -1,7 +1,7 @@
 package seratoparser
 
 import (
-"log"
+	"log"
 	"strconv"
 	"testing"
 )
@@ -14,4 +14,3 @@ func TestReadDatabase(t *testing.T) {
 		log.Println(mediaEntities)
 	}
 }
-

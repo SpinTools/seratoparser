@@ -15,7 +15,7 @@ func TestReadCrates(t *testing.T) {
 	}
 
 	foundTracks := false
-	for _,crate := range crates {
+	for _, crate := range crates {
 		mediaEntities := p.GetCrateTracks(crate.Name())
 		if len(mediaEntities) > 0 {
 			foundTracks = true

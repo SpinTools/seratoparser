@@ -12,7 +12,7 @@ import (
 	"unicode/utf8"
 )
 
-func parseFilePeek (b *bufio.Reader, n int) ([]byte, bool) {
+func parseFilePeek(b *bufio.Reader, n int) ([]byte, bool) {
 	bPeek, err := b.Peek(n)
 	if err != nil {
 		return nil, true
@@ -20,7 +20,7 @@ func parseFilePeek (b *bufio.Reader, n int) ([]byte, bool) {
 
 	return bPeek, false
 }
-func parseFileByte (b *bufio.Reader) (byte, bool) {
+func parseFileByte(b *bufio.Reader) (byte, bool) {
 	bByte, err := b.ReadByte()
 	if err != nil {
 		return '\000', true
@@ -28,12 +28,14 @@ func parseFileByte (b *bufio.Reader) (byte, bool) {
 
 	return bByte, false
 }
-func parseFileLen (b *bufio.Reader, n int) (string, bool) {
+func parseFileLen(b *bufio.Reader, n int) (string, bool) {
 	var buffer bytes.Buffer
 	counter := 0
 	for {
-		char,eof := parseFileByte(b)
-		if eof { return "", true }
+		char, eof := parseFileByte(b)
+		if eof {
+			return "", true
+		}
 		buffer.WriteByte(char)
 		counter++
 		if counter == n {
@@ -44,14 +46,16 @@ func parseFileLen (b *bufio.Reader, n int) (string, bool) {
 	return buffer.String(), false
 }
 
-func parseCString (b *bufio.Reader) (string, bool) {
+func parseCString(b *bufio.Reader) (string, bool) {
 	/*
 	 * From the passed string, find the nearest \0 byte and return everything before it
 	 */
 	var buffer bytes.Buffer
 	for {
 		char, eof := parseFileByte(b)
-		if eof { return "", true }
+		if eof {
+			return "", true
+		}
 		if char == '\000' {
 			break
 		}
@@ -61,27 +65,33 @@ func parseCString (b *bufio.Reader) (string, bool) {
 	return buffer.String(), false
 }
 
-func parseField (b *bufio.Reader) (string, string, bool) {
+func parseField(b *bufio.Reader) (string, string, bool) {
 	/*
 	 *
 	 */
 	name, eof := parseFileLen(b, 4)
-	if eof { return "", "", true }
+	if eof {
+		return "", "", true
+	}
 	rawlen, eof := parseFileLen(b, 4)
-	if eof { return "", "", true }
+	if eof {
+		return "", "", true
+	}
 	length := int(hexBin2Float(rawlen))
 
 	data, eof := parseFileLen(b, length)
-	if eof { return "", "", true }
+	if eof {
+		return "", "", true
+	}
 
 	return name, data, false
 }
 
-func matchUtf16 (b *bufio.Reader, s string) (bool) {
+func matchUtf16(b *bufio.Reader, s string) bool {
 	/*
 	 * Match utf16 string with next len() bytes
 	 */
-	chars,_ := parseFileLen(b, len(s))
+	chars, _ := parseFileLen(b, len(s))
 	if chars == s {
 		return true
 	}
@@ -101,7 +111,7 @@ func utf16BytesToString(b []byte) string {
 	return string(utf16.Decode(utf))
 }
 
-func makeUtf8 (s string) (string) {
+func makeUtf8(s string) string {
 	/*
 	 * Convert the passed string s to UTF8 format
 	 */
@@ -116,7 +126,7 @@ func makeUtf8 (s string) (string) {
 	return buffer.String()
 }
 
-func makeUtf16 (s string) (string) {
+func makeUtf16(s string) string {
 	/*
 	 * Convert the passed string s to serato UTF16 format
 	 */
@@ -129,11 +139,11 @@ func makeUtf16 (s string) (string) {
 	return buffer.String()
 }
 
-func hexBin2Int (raw string) (int) {
+func hexBin2Int(raw string) int {
 	return int(hexBin2Float(raw))
 }
 
-func hexBin2Float (raw string) (val float64) {
+func hexBin2Float(raw string) (val float64) {
 	for i := 0; i < len(raw); i++ {
 		fl1 := math.Pow(2, 8)
 		fl2 := float64((len(raw) - 1) - i)
@@ -143,11 +153,13 @@ func hexBin2Float (raw string) (val float64) {
 	return val
 }
 
-func parseOtrk (dataBuffer *bufio.Reader, newEntity *MediaEntity) {
+func parseOtrk(dataBuffer *bufio.Reader, newEntity *MediaEntity) {
 	elem := reflect.ValueOf(newEntity).Elem()
 	for {
 		dataName, dataValue, eof := parseField(dataBuffer)
-		if eof { break }
+		if eof {
+			break
+		}
 
 		newEntity.DVOL = seratoVolume
 
@@ -156,12 +168,14 @@ func parseOtrk (dataBuffer *bufio.Reader, newEntity *MediaEntity) {
 	}
 }
 
-func parseAdat (dataValue string, newEntity interface{}) {
+func parseAdat(dataValue string, newEntity interface{}) {
 	adatBuffer := bufio.NewReader(strings.NewReader(dataValue))
 	elem := reflect.ValueOf(newEntity).Elem()
 	for {
 		adatFieldHex, adatValue, eof := parseField(adatBuffer)
-		if eof { break }
+		if eof {
+			break
+		}
 
 		adatFieldID := hexBin2Int(adatFieldHex)
 		adatName := SeratoAdatMap[adatFieldID]
@@ -175,7 +189,7 @@ func parseAdat (dataValue string, newEntity interface{}) {
 	}
 }
 
-func reflectValue (v *reflect.Value, dataValue string) {
+func reflectValue(v *reflect.Value, dataValue string) {
 	if v.IsValid() {
 		t := v.Type().String()
 		switch t {
@@ -191,7 +205,7 @@ func reflectValue (v *reflect.Value, dataValue string) {
 			//rlog.Debug("%d(%d) \n", newFloat, int64(newFloat))
 			v.SetInt(int64(newFloat))
 		case "bool":
-			newBool,_ := strconv.ParseBool(dataValue)
+			newBool, _ := strconv.ParseBool(dataValue)
 			//rlog.Debug("%t \n", newBool)
 			v.SetBool(newBool)
 		case "[]uint8":
