@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import "path/filepath"
 

@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import (
 	"log"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestReadCrates(t *testing.T) {
-	p := New(SERATO_DIR)
+	p := New(SeratoDir)
 	crates := p.GetCrates()
 	if len(crates) == 0 {
 		t.Errorf("GetCrates() = %q, want %q", strconv.Itoa(len(crates)), ">0")

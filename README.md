@@ -1,6 +1,6 @@
 # Serato Parser
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/SpinTools/serato-parser)](https://goreportcard.com/report/github.com/SpinTools/serato-parser)
+[![Go Report Card](https://goreportcard.com/badge/github.com/SpinTools/seratoparser)](https://goreportcard.com/report/github.com/SpinTools/seratoparser)
 
 
 A GoLang library for reading Serato database files.
@@ -16,7 +16,7 @@ Data Types Supported:
 This package can be installed with the go get command:
 
 ```bash
-go get -u github.com/SpinTools/serato-parser
+go get -u github.com/SpinTools/seratoparser
 ```
 
 ## Usage
@@ -52,4 +52,4 @@ func main() {
 Pull requests are welcome, update tests as appropriate.
 
 ## License
-[MIT](https://github.com/SpinTools/serato-parser/LICENSE)
+[MIT](https://github.com/SpinTools/seratoparser/LICENSE)

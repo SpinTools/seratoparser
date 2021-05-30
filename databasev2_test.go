@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import (
 "log"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestReadDatabase(t *testing.T) {
-	p := New(SERATO_DIR)
+	p := New(SeratoDir)
 	mediaEntities := p.GetAllTracks()
 	if len(mediaEntities) == 0 {
 		t.Errorf("GetAllTracks() = %q, want %q", strconv.Itoa(len(mediaEntities)), ">0")

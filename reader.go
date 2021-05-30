@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import (
 	"bufio"
@@ -9,10 +9,12 @@ import (
 	"strings"
 )
 
+// Parser holds the filepath of all databases
 type Parser struct {
 	FilePath string
 }
 
+// SeratoParser is the Parser for this Serato Database module. Exported for future option of override
 var SeratoParser Parser
 
 // New creates a new object with the provided Serato Database Path
@@ -32,16 +34,16 @@ func fileHeader (fileBuffer *bufio.Reader, key string, value string) bool {
 	}
 
 	// match vrsn
-	key_16 := makeUtf16(key)
-	if !matchUtf16(fileBuffer, key_16) {
-		rlog.Error("fileHeader: vrsn value mismatch |", key_16)
+	key16 := makeUtf16(key)
+	if !matchUtf16(fileBuffer, key16) {
+		rlog.Error("fileHeader: vrsn value mismatch |", key16)
 		return false
 	}
 
 	// match version type
-	value_16 := makeUtf16(value)
-	if !matchUtf16(fileBuffer, value_16) {
-		rlog.Error("fileHeader: vrsn type mismatch |", value_16)
+	value16 := makeUtf16(value)
+	if !matchUtf16(fileBuffer, value16) {
+		rlog.Error("fileHeader: vrsn type mismatch |", value16)
 		return false
 	}
 

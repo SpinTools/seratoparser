@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import (
 	"io/ioutil"
@@ -13,10 +13,8 @@ import (
 // TODO: Is there Serato Crate meta data?
 func (p Parser) GetCrates() []os.FileInfo {
 	var crateFiles []os.FileInfo
-	var subcratesPaths []string
 
 	seratoFolder := filepath.FromSlash(p.FilePath + "/Subcrates")
-	subcratesPaths = append(subcratesPaths, seratoFolder)
 	seratoFiles, _ := ioutil.ReadDir(seratoFolder)
 	for _,seratoFile := range seratoFiles {
 		fileExt := filepath.Ext(seratoFile.Name())
@@ -24,8 +22,6 @@ func (p Parser) GetCrates() []os.FileInfo {
 			continue
 		}
 
-		filePath := filepath.FromSlash(seratoFolder + "/" + seratoFile.Name())
-		filePath,_ = filepath.Abs(filePath)
 		crateFiles = append(crateFiles, seratoFile)
 	}
 

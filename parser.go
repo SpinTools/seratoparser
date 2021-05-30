@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import (
 	"bufio"
@@ -163,8 +163,8 @@ func parseAdat (dataValue string, newEntity interface{}) {
 		adatFieldHex, adatValue, eof := parseField(adatBuffer)
 		if eof { break }
 
-		adatFieldId := hexBin2Int(adatFieldHex)
-		adatName := SeratoAdatMap[adatFieldId]
+		adatFieldID := hexBin2Int(adatFieldHex)
+		adatName := SeratoAdatMap[adatFieldID]
 
 		v := elem.FieldByName(strings.ToUpper(adatName))
 		reflectValue(&v, adatValue)

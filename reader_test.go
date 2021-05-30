@@ -1,12 +1,12 @@
-package serato_parser
+package seratoparser
 
 import (
 	"os/user"
 	"path/filepath"
 )
 
-var USER_HOME_DIR string
-var SERATO_DIR string
+var UserHomeDir string
+var SeratoDir string
 
 func init() {
 	currentUser, err := user.Current()
@@ -14,6 +14,6 @@ func init() {
 		panic(err)
 	}
 
-	USER_HOME_DIR = filepath.FromSlash(currentUser.HomeDir)
-	SERATO_DIR = filepath.FromSlash(USER_HOME_DIR + "/Music/_Serato_")
+	UserHomeDir = filepath.FromSlash(currentUser.HomeDir)
+	SeratoDir = filepath.FromSlash(UserHomeDir + "/Music/_Serato_")
 }

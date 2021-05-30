@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import (
 	"bufio"
@@ -11,8 +11,11 @@ import (
 	"strings"
 )
 
-const HISTORY_PATH = "/History"
-const SESSION_PATH = HISTORY_PATH+"/Sessions"
+// HistoryPath is the path inside the _Serato_ folder that contains History data
+var HistoryPath = "/History"
+
+// SessionPath is the path inside the _Serato_/History folder that contains all the played Sessions.
+var SessionPath = HistoryPath +"/Sessions"
 
 // GetHistorySessions returns a list of all Serato History session files in the users Serato directory.
 func (p Parser) GetHistorySessions() []fs.FileInfo {
@@ -20,7 +23,7 @@ func (p Parser) GetHistorySessions() []fs.FileInfo {
 	var err error
 
 	//historySessionDir := currentUser.HomeDir + "/Music/_Serato_/History/Sessions"
-	historySessionDir := filepath.FromSlash(p.FilePath + SESSION_PATH)
+	historySessionDir := filepath.FromSlash(p.FilePath + SessionPath)
 	sessionFiles, err = ioutil.ReadDir(historySessionDir)
 
 	// Remove .DS_STORE files.
@@ -47,7 +50,7 @@ func (p Parser) GetHistorySessions() []fs.FileInfo {
 func (p Parser) ReadHistorySession(fileName string) []HistoryEntity {
 	var historyEntities []HistoryEntity
 
-	historySessionFilepath := filepath.FromSlash(p.FilePath + SESSION_PATH + "/" + fileName)
+	historySessionFilepath := filepath.FromSlash(p.FilePath + SessionPath + "/" + fileName)
 	seratoFile, err := filepath.Abs(historySessionFilepath)
 	if err != nil || seratoFile == "" {
 		rlog.Critical(err)

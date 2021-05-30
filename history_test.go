@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 import (
 	"log"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestReadHistorySession(t *testing.T) {
-	p := New(SERATO_DIR)
+	p := New(SeratoDir)
 	sessions := p.GetHistorySessions()
 	if len(sessions) == 0 {
 		t.Errorf("GetHistorySessions() = %q, want %q", strconv.Itoa(len(sessions)), ">0")

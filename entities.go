@@ -1,4 +1,4 @@
-package serato_parser
+package seratoparser
 
 var seratoVolume string
 
@@ -42,7 +42,7 @@ type HistoryEntity struct {
 	RDEV    string  // rdevice
 }
 
-// Defines all the known keys with their integer key found in Serato Databases
+// SeratoAdatMap Defines all the known keys with their integer key found in Serato Databases
 // TODO: Identify all fields of an ADAT object
 var SeratoAdatMap = map[int]string{
 	1   :   "RROW",  // rrow
