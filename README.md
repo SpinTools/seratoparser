@@ -24,7 +24,7 @@ go get -u github.com/SpinTools/seratoparser
 ```go
 func main() {
     // Provide Serato Folder
-    p := SeratoParser.New("/Users/Stoyvo/Music/_Serato_")
+    p := seratoparser.New("/Users/Stoyvo/Music/_Serato_")
     
     // Get All Tracks in Serato Database
     Tracks := p.GetAllTracks()
